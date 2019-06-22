@@ -1,9 +1,9 @@
 package pages;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -11,12 +11,27 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class HomePageHelper extends PageBase {
 
 
+    @FindBy(id="idsignin")
+    WebElement loginButton;
+
+    @FindBy(xpath = "//span[contains(text(),'Home')]")
+    WebElement homeIcon;
+
+    @FindBy(xpath = "//span[contains(text(),'Login')]")
+    WebElement loginIcon;
+
+    @FindBy(xpath = "//span[contains(text(),'Registration')]")
+    WebElement registrationIcon;
+
     public HomePageHelper(WebDriver driver) {
+
         super(driver);
     }
 
-    public void waitUntilPageIsLoaded(){
-        waitUntilElementClickable(By.id("idsignin"),20);
+    public HomePageHelper waitUntilPageIsLoaded(){
+
+        waitUntilElementIsClickable(loginButton,20);
+        return this;
     }
 
     public void waitUntilPageIsLoadedJS(){
@@ -28,40 +43,25 @@ public class HomePageHelper extends PageBase {
         });
     }
 
-    public void openLoginPage() {
+    public HomePageHelper openLoginPage() {
 
-        driver.findElement(By.id("idsignin")).click();
+        loginButton.click();
+        return this;
     }
 
     public boolean homeIconIsDisplayed() {
-        WebElement homeIcon = driver.findElements(By.className("navi-item")).get(0);
-        return homeIcon.isDisplayed();
 
+        return homeIcon.isDisplayed();
     }
 
     public boolean loginIconIsDisplayed() {
-        WebElement loginIcon = driver.findElements(By.className("navi-item")).get(1);
+
         return loginIcon.isDisplayed();
     }
 
     public boolean registrationIconIsDisplayed() {
-        WebElement registrationIcon = driver.findElements(By.className("navi-item")).get(2);
+
         return registrationIcon.isDisplayed();
     }
-
-    public boolean homeAuthIconIsHidden() {
-        WebElement homeAuthIcon = driver.findElement(By.id("ihome"));
-        return !homeAuthIcon.isDisplayed();
-    }
-
-    public boolean profileIconIsHidded() {
-        WebElement profileIcon = driver.findElement(By.id("profile"));
-        return !profileIcon.isDisplayed();
-
-    }
-
-
-
-
 
 }

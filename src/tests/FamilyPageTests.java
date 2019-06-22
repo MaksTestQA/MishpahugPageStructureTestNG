@@ -1,6 +1,6 @@
 package tests;
 
-import org.openqa.selenium.By;
+import org.openqa.selenium.support.PageFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -19,49 +19,51 @@ public class FamilyPageTests extends TestsBase{
     @BeforeMethod
     public void initTests(){
 
-        homePage = new HomePageHelper(driver);
-        loginPage = new LoginPageHelper(driver);
-        homePageAuth = new HomePageAuthHelper(driver);
-        profilePage = new ProfilePageHelper(driver);
-        editProfilePage = new EditProfilePageHelper(driver);
-        myFamilyPage = new MyFamilyPageHelper(driver);
+        homePage = PageFactory.initElements(driver,HomePageHelper.class);
+        loginPage = PageFactory.initElements(driver, LoginPageHelper.class);
+        homePageAuth = PageFactory.initElements(driver,HomePageAuthHelper.class);
+        profilePage = PageFactory.initElements(driver,ProfilePageHelper.class);
+        editProfilePage = PageFactory.initElements(driver, EditProfilePageHelper.class);
+        myFamilyPage = PageFactory.initElements(driver, MyFamilyPageHelper.class);
     }
 
 
 
     @Test
-    public void profileFamilyInfoTest(){
+    public void profileFamilyInfoTest() throws InterruptedException {
 
-        homePage.waitUntilPageIsLoaded();
-        homePage.openLoginPage();
-        loginPage.waitUntilPageIsLoaded();
-        loginPage.enterLoginPassword(LOGIN,PASSWORD);
-        homePageAuth.waitUntilPageIsLoaded();
-        homePageAuth.goToProfile();
+        System.out.println("--------------------profileFamilyInfoTest is started--------------------");
+        homePage.waitUntilPageIsLoaded().openLoginPage();
+        loginPage.waitUntilPageIsLoaded().enterLoginPassword(LOGIN,PASSWORD);
+        homePageAuth.waitUntilPageIsLoaded().goToProfile();
         profilePage.waitUntilPageIsLoaded();
-        String confessionProfile = driver.findElement(By.id("fieldobjconfession")).getText();
-        String languageProfile = driver.findElement(By.id("fieldobjlanguages")).getText();
-        String foodsProfile = driver.findElement(By.id("fieldobjfoodPreferences")).getText();
 
 
-        if(!profilePage.checkProfileStatus(familyStatus)) {
+        String confessionProfile = profilePage.confessionProfileData();
+        String languageProfile = profilePage.languageProfileData();
+        String foodsProfile = profilePage.foodsProfileData();
+      //  System.out.println(confessionProfile);
+        //System.out.println(languageProfile);
+        //System.out.println(foodsProfile);
+
+
+        if(!profilePage.checkProfileStatus("family")) {
 
             profilePage.goToEditProfilePage();
-            editProfilePage.waitUntilPageIsLoaded();
-            editProfilePage.selectFamilyStatus();
-            editProfilePage.saveProfile();
-            profilePage.waitUntilPageIsLoaded();
-            System.out.println("Family status - "+profilePage.checkProfileStatus(familyStatus));
+            editProfilePage.waitUntilPageIsLoaded().selectFamilyStatus().saveProfile();
         }
-
+            profilePage.waitUntilPageIsLoaded();
             profilePage.goToHomePageAuth();
-            homePageAuth.waitUntilPageIsLoaded();
-            homePageAuth.goToMyFamilyPage();
+            homePageAuth.waitUntilPageIsLoaded().goToMyFamilyPage();
             myFamilyPage.waitUntilPageIsLoaded();
 
-        String confessionMyFamily = driver.findElement(By.id("fieldobjconfession")).getText();
-        String languageMyFamily = driver.findElement(By.id("fieldobjlanguages")).getText();
-        String foodsMyFamily = driver.findElement(By.id("fieldobjfoodPreferences")).getText();
+
+        String confessionMyFamily = myFamilyPage.confessionMyFamilyData();
+        //System.out.println(confessionMyFamily);
+        String languageMyFamily = myFamilyPage.languageMyFamilyData();
+        //System.out.println(languageMyFamily);
+        String foodsMyFamily = myFamilyPage.foodsMyFamilyData();
+        //System.out.println(foodsMyFamily);
 
         int counter = 0;
         if(confessionProfile.equals(confessionMyFamily))  counter++;
@@ -74,11 +76,7 @@ public class FamilyPageTests extends TestsBase{
             System.out.println("foods preferences are the same - "+foodsProfile.equals(foodsMyFamily));
 
         Assert.assertEquals(counter, 3);
-
+        System.out.println("--------------------profileFamilyInfoTest is finished--------------------");
     }
-
-
-
-
 
 }

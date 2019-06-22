@@ -1,45 +1,109 @@
 package pages;
 
-import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.util.List;
 
 import static tests.TestsBase.LOGIN;
 
 public class ProfilePageHelper extends PageBase {
+
+
+
+    @FindBy(id="fieldobjconfession")
+    WebElement confessionProfileData;
+
+    @FindBy(id="fieldobjlanguages")
+    WebElement languageProfileData;
+
+    @FindBy(id="fieldobjfoodPreferences")
+    WebElement foodsProfileData;
+
+    @FindBy(id="titleprofile")
+    WebElement titleProfile;
+
+    @FindBy(className = "itemprofilefit")
+    List<WebElement> itemsListMyFamiliProfile;
+
+    @FindBy(id="ihome")
+    WebElement homeIcon;
+
+    @FindBy(id="statusinmishpahuginprofile")
+    WebElement userStatusData;
+
+    @FindBy(id="idbtneditprofile")
+    WebElement editProfileButton;
+
+
+
     public ProfilePageHelper(WebDriver driver) {
+
         super(driver);
     }
 
 
+
     public boolean checkingTitle() {
-        waitUntilElemContainsText(By.id("titleprofile"),LOGIN,30);
-        WebElement titleProfile = driver.findElement(By.id("titleprofile"));
+
+        waitUntilElemContainsText(titleProfile,LOGIN,30);
         return titleProfile.getText().contains(LOGIN);
     }
 
-    public void waitUntilPageIsLoaded() {
-           waitUntilElementIsVisible(By.id("titleprofile"),30);
+    public ProfilePageHelper waitUntilPageIsLoaded() {
+
+        waitUntilListElementsIsVisible(itemsListMyFamiliProfile.subList(5,13),30);
+        return this;
+    }
+
+    public void waitUntilPageIsLoadedJS(){
+
+        WebDriverWait wait = new WebDriverWait(driver , 30);
+        wait.until((ExpectedCondition<Boolean>) driver -> {
+            System.out.println("Current windows State - " + String.valueOf(((JavascriptExecutor)driver).executeScript("return document.readyState")));
+            return String.valueOf(((JavascriptExecutor)driver).executeScript("return document.readyState")).equals("complete");
+        });
     }
 
     public boolean checkProfileStatus(String status) {
 
-        waitUntilElemContainsText(By.id("titleprofile"),"maks",30);
-        return driver.findElement(By.id("statusinmishpahuginprofile")).getText().equals(status);
+      //  waitUntilElemContainsText(userStatusData,status,30);
+        return userStatusData.getText().equals(status);
     }
 
 
-    public void goToEditProfilePage() {
+    public ProfilePageHelper goToEditProfilePage() {
 
-        waitUntilElementIsVisible(By.xpath("//div[@id='titleprofile']"),10);
-        driver.findElement(By.id("idbtneditprofile")).click();
-
+        waitUntilElementIsVisible(titleProfile,30);
+        editProfileButton.click();
+        return this;
     }
 
-    public void goToHomePageAuth() {
+    public ProfilePageHelper goToHomePageAuth() {
 
-        driver.findElement(By.id("ihome")).click();
+        homeIcon.click();
+        return this;
     }
 
+
+    public String confessionProfileData(){
+
+      return confessionProfileData.getText();
+    }
+
+    public String languageProfileData() {
+
+        return languageProfileData.getText();
+    }
+
+
+    public String foodsProfileData() {
+
+        return foodsProfileData.getText();
+    }
 
 }

@@ -1,46 +1,83 @@
 package pages;
 
-import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class EditProfilePageHelper extends PageBase {
 
+    @FindBy(xpath="//div[@class='centertext']")
+    WebElement editProfileTitle;
+
+    @FindBy(id="typeuser2inprofile")
+    WebElement familyStatusButton;
+
+    @FindBy(id="typeuser1inprofile")
+    WebElement guestStatusButton;
+
+    @FindBy(id="typeuser3inprofile")
+    WebElement guestAndFamilyButton;
+
+    @FindBy(xpath="//i[@class='fa fa-check-square-o']")
+    WebElement checkPictureInButtonSave;
+
+    @FindBy(id="idbtnsaveprofile")
+    WebElement saveButtonProfile;
+
+
+
 
     public EditProfilePageHelper(WebDriver driver) {
+
         super(driver);
     }
 
 
-    public void waitUntilPageIsLoaded() {
-        waitUntilElemContainsText(By.xpath("//div[@class='centertext']"),"Edit profile! Please enter data in fields!",20);
+    public EditProfilePageHelper waitUntilPageIsLoaded() {
+
+        waitUntilElemContainsText(editProfileTitle,"Edit profile! Please enter data in fields!",20);
+        return this;
     }
 
-    public void selectFamilyStatus() {
+    public void waitUntilPageIsLoadedJS(){
 
-        driver.findElement(By.id("typeuser2inprofile")).click();
-        waitUntilElemAttrContainsText(By.id("typeuser2inprofile"),
-                "class","active",5);
+        WebDriverWait wait = new WebDriverWait(driver , 30);
+        wait.until((ExpectedCondition<Boolean>) driver -> {
+            System.out.println("Current windows State - " + String.valueOf(((JavascriptExecutor)driver).executeScript("return document.readyState")));
+            return String.valueOf(((JavascriptExecutor)driver).executeScript("return document.readyState")).equals("complete");
+        });
     }
 
-    public void saveProfile() {
+    public EditProfilePageHelper selectFamilyStatus() {
 
-        waitUntilElementIsVisible(By.xpath("//i[@class='fa fa-check-square-o']"),10);
-        driver.findElement(By.id("idbtnsaveprofile")).click();
-
+        familyStatusButton.click();
+        waitUntilElemAttrContainsText((familyStatusButton),
+                "class","active",20);
+        return this;
     }
 
-    public void selectGuestStatus() {
+    public EditProfilePageHelper saveProfile() {
 
-        driver.findElement(By.id("typeuser1inprofile")).click();
-        waitUntilElemAttrContainsText(By.id("typeuser1inprofile"),"class","active",5);
+        waitUntilElementIsVisible(checkPictureInButtonSave,20);
+        saveButtonProfile.click();
+        return this;
     }
 
-    public void selectGuestAndFamilyStatus(){
+    public EditProfilePageHelper selectGuestStatus() {
 
-        driver.findElement(By.id("typeuser3inprofile")).click();
-        waitUntilElemAttrContainsText(By.id("typeuser3inprofile"),"class","active",5);
+        guestStatusButton.click();
+        waitUntilElemAttrContainsText(guestStatusButton,"class","active",20);
+        return this;
     }
 
+    public EditProfilePageHelper selectGuestAndFamilyStatus(){
 
+        guestAndFamilyButton.click();
+        waitUntilElemAttrContainsText(guestAndFamilyButton,"class","active",20);
+        return this;
+    }
 
 }

@@ -1,11 +1,14 @@
 package tests;
 
+import org.openqa.selenium.support.PageFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import pages.HomePageAuthHelper;
 import pages.HomePageHelper;
 import pages.LoginPageHelper;
+
+import java.awt.*;
 
 public class LoginPageTests extends TestsBase {
 
@@ -16,14 +19,14 @@ public class LoginPageTests extends TestsBase {
     @BeforeMethod
     public void initTests(){
 
-        homePage = new HomePageHelper(driver);
-        loginPage = new LoginPageHelper(driver);
-        homePageAuth = new HomePageAuthHelper(driver);
-
+        homePage = PageFactory.initElements(driver,HomePageHelper.class);
+        loginPage = PageFactory.initElements(driver,LoginPageHelper.class);
+        homePageAuth = PageFactory.initElements(driver,HomePageAuthHelper.class);
     }
 
     @Test
     public void loginPositive() {
+
         homePage.waitUntilPageIsLoaded();
         homePage.openLoginPage();
         loginPage.waitUntilPageIsLoaded();
@@ -33,22 +36,22 @@ public class LoginPageTests extends TestsBase {
     }
 
     @Test
-    public void loginNegative() {
-        homePage.waitUntilPageIsLoaded();
-        homePage.openLoginPage();
-        loginPage.waitUntilPageIsLoaded();
-        loginPage.enterLoginPassword("jjjj","syuyb87677");
-       // Assert.assertTrue(loginPage.wrongMessageIsDisplayed());
-        loginPage.closeLoginWindows();
-        homePage.waitUntilPageIsLoaded();
+    public void loginNegative() throws AWTException{
+
+        homePage.waitUntilPageIsLoaded().openLoginPage();
+        loginPage.waitUntilPageIsLoaded().enterLoginPassword("jjjj","syuyb87677");
+        if(!loginPage.wrongMessageIsDisplayed()) {
+            loginPage.cancelPopUpWindow();
+        }
+
         int counter = 0;
+        if(loginPage.wrongMessageIsDisplayed())counter++;
+        homePage.waitUntilPageIsLoaded();
         if(homePage.homeIconIsDisplayed())counter++;
         if(homePage.loginIconIsDisplayed())counter++;
         if(homePage.registrationIconIsDisplayed())counter++;
-        if(homePage.homeAuthIconIsHidden())counter++;
-        if(homePage.profileIconIsHidded())counter++;
 
-        Assert.assertEquals(counter,5);
+        Assert.assertEquals(counter,4);
 
     }
 

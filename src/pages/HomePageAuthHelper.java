@@ -1,49 +1,70 @@
 package pages;
 
-import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class HomePageAuthHelper extends PageBase {
 
+    @FindBy(id="profile")
+    WebElement profileIcon;
+
+    @FindBy(id="family")
+    WebElement myFamilyIcon;
+
+    @FindBy(id="idbtnaddevent")
+    WebElement addEventButton;
 
     public HomePageAuthHelper(WebDriver driver) {
+
         super(driver);
     }
 
-    public void waitUntilPageIsLoaded(){
-        waitUntilElementClickable(By.id("profile"),20);
+    public HomePageAuthHelper waitUntilPageIsLoaded(){
+
+        waitUntilElementIsClickable(profileIcon,30);
+        return this;
     }
 
 
+    public void waitUntilPageIsLoadedJS(){
+
+        WebDriverWait wait = new WebDriverWait(driver , 30);
+        wait.until((ExpectedCondition<Boolean>) driver -> {
+            System.out.println("Current windows State - " + String.valueOf(((JavascriptExecutor)driver).executeScript("return document.readyState")));
+            return String.valueOf(((JavascriptExecutor)driver).executeScript("return document.readyState")).equals("complete");
+        });
+    }
 
     public boolean profileButtonTitleContainsText(String login) {
-        WebElement profileButton = driver.findElement(By.id("profile"));
-        return profileButton.getAttribute("title").contains(login);
 
+        return profileIcon.getAttribute("title").contains(login);
     }
 
-    public void goToProfile() {
+
+
+    public HomePageAuthHelper goToProfile() {
 
         waitUntilPageIsLoaded();
-        WebElement profileButton = driver.findElement(By.id("profile"));
-        profileButton.click();
-
+        profileIcon.click();
+        return this;
     }
 
-    public void goToMyFamilyPage() {
+    public HomePageAuthHelper goToMyFamilyPage() {
+
         waitUntilPageIsLoaded();
-        //waitUntilElementIsVisible(By.id("titleprofile"),10);
-        driver.findElement(By.id("family")).click();
+        myFamilyIcon.click();
+        return this;
     }
 
     public boolean checkButtonAddEventIsDisplayed() {
+
         waitUntilPageIsLoaded();
-        return driver.findElement(By.id("idbtnaddevent")).isDisplayed();
+        return addEventButton.isDisplayed();
     }
-
-
-
 
 }
 
